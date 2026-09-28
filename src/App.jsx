@@ -4,12 +4,16 @@ import Footer from './components/Footer';
 import ProductCard from './components/ProductCard';
 import ContactForm from './components/ContactForm';
 
+const API_URL = 'http://localhost:3000/api';
+const response = await fetch(`${API_URL}/products`);
+
 function App() {
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [cartCount, setCartCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+ 
 
   useEffect(() => {
     async function loadProducts() {

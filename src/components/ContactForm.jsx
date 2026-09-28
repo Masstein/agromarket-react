@@ -1,8 +1,31 @@
+const API_URL = 'http://localhost:3000/api';
+
 function ContactForm() {
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    alert('Заявка отправлена! Мы свяжемся с вами.');
-    e.target.reset();
+    const form = e.target;
+
+    const data = Object.fromEntries(new FormData(form));
+
+    try {
+      const res = await fetch(`${API_URL}/orders`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+
+      const result = await res.json();
+
+      if (!res.ok) {
+        alert('Ошибка: ' + result.error);
+        return;
+      }
+
+      alert(`Заявка №${result.id} принята!`);
+      form.reset();
+    } catch (err) {
+      alert('Сервер недоступен. Запущен ли agromarket-server?');
+    }
   }
 
   return (
@@ -22,7 +45,7 @@ function ContactForm() {
                placeholder="+7 7XX XXX XX XX" />
 
         <label htmlFor="volume">Объём заказа, кг</label>
-        <input id="volume" name="volume" type="number" min="10" required />
+        <input id="volume" name="quantity" type="number" min="10" required />
 
         <label htmlFor="date">Желаемая дата доставки</label>
         <input id="date" name="date" type="date" />
