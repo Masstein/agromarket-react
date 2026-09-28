@@ -1,5 +1,8 @@
 import { useState, useEffect } from 'react';
+import Header from './components/Header';
+import Footer from './components/Footer';
 import ProductCard from './components/ProductCard';
+import ContactForm from './components/ContactForm';
 
 function App() {
   const [products, setProducts] = useState([]);
@@ -37,34 +40,48 @@ function App() {
 
   return (
     <>
-      <header>
-        <h1>АгроМаркет</h1>
-        <div className="cart">🛒 Корзина: {cartCount}</div>
-      </header>
+      <Header cartCount={cartCount} />
 
-      <main>
-        <section className="catalog">
-          <h2>Каталог</h2>
-
-          <input
-            type="text"
-            placeholder="Поиск товара..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-
-          {loading && <p className="status">Загрузка...</p>}
-          {error && <p className="status error">{error}</p>}
-
-          {filteredProducts.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              onAdd={handleAddToCart}
+      <main className="page">
+        <section id="catalog" className="catalog">
+          <div className="catalog-toolbar">
+            <h2>Каталог</h2>
+            <input
+              type="search"
+              placeholder="Поиск товара..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
             />
-          ))}
+          </div>
+
+          {loading && <p>Загрузка...</p>}
+          {error && <p className="error">{error}</p>}
+
+          <div className="product-grid">
+            {filteredProducts.map((product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                onAdd={handleAddToCart}
+                featured={product.id === 1}
+              />
+            ))}
+          </div>
         </section>
+
+        <aside id="delivery" className="sidebar">
+          <h3>Доставка</h3>
+          <ul>
+            <li>Астана — на следующий день</li>
+            <li>Акмолинская область — 2–3 дня</li>
+            <li>Бесплатно от 20 000 тг</li>
+          </ul>
+        </aside>
+
+        <ContactForm />
       </main>
+
+      <Footer />
     </>
   );
 }
