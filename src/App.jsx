@@ -18,7 +18,7 @@ function App() {
   useEffect(() => {
     async function loadProducts() {
       try {
-        const response = await fetch('http://localhost:3001/products');
+        const response = await fetch(`${API_URL}/products`);
         if (!response.ok) {
           throw new Error('Ошибка сервера: ' + response.status);
         }
