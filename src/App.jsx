@@ -3,9 +3,9 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import ProductCard from './components/ProductCard';
 import ContactForm from './components/ContactForm';
-
-const API_URL = 'http://localhost:3000/api';
-const response = await fetch(`${API_URL}/products`);
+import LoginForm from './components/LoginForm';
+import AddProductForm from './components/AddProductForm';
+import { API_URL, apiFetch } from './api.js';
 
 function App() {
   const [products, setProducts] = useState([]);
@@ -13,8 +13,13 @@ function App() {
   const [cartCount, setCartCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
- 
 
+  // Пользователь читается из localStorage один раз при первом рендере
+  const [user, setUser] = useState(
+    () => JSON.parse(localStorage.getItem('user') || 'null')
+  );
+
+  // Загрузка каталога
   useEffect(() => {
     async function loadProducts() {
       try {
@@ -26,13 +31,33 @@ function App() {
         setProducts(data);
       } catch (err) {
         console.error(err);
-        setError('Не удалось загрузить товары. Проверьте, запущен ли json-server.');
+        setError('Не удалось загрузить товары. Проверьте, запущен ли сервер.');
       } finally {
         setLoading(false);
       }
     }
     loadProducts();
   }, []);
+
+  // При открытии страницы спрашиваем сервер, действителен ли сохранённый токен
+  useEffect(() => {
+    if (!localStorage.getItem('token')) return;
+    apiFetch('/auth/me')
+      .then(setUser)
+      .catch(() => {}); // при 401 apiFetch сам выполнит выход
+  }, []);
+
+  function handleLogin(user, token) {
+    localStorage.setItem('token', token);
+    localStorage.setItem('user', JSON.stringify(user));
+    setUser(user);
+  }
+
+  function handleLogout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    setUser(null);
+  }
 
   function handleAddToCart() {
     setCartCount(cartCount + 1);
@@ -46,8 +71,23 @@ function App() {
     <>
       <Header cartCount={cartCount} />
 
+      <div className="auth-bar">
+        {user ? (
+          <>
+            <span>Вы вошли как <b>{user.name}</b> ({user.role})</span>
+            <button onClick={handleLogout}>Выйти</button>
+          </>
+        ) : (
+          <LoginForm onLogin={handleLogin} />
+        )}
+      </div>
+
       <main className="page">
         <section id="catalog" className="catalog">
+          {user?.role === 'admin' && (
+            <AddProductForm onAdded={(p) => setProducts([...products, p])} />
+          )}
+
           <div className="catalog-toolbar">
             <h2>Каталог</h2>
             <input
