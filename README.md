@@ -1,10 +1,10 @@
 ## Продакшен
 
-- Сайт: https://agromarket-react-eta.vercel.app (укажите точный адрес вашего проекта на Vercel)
+- Сайт: https://agromarket-react-eta.vercel.app 
 - API: https://agromarket-api-masstein.onrender.com/api/health
 - Схема: React (Vercel) → Express (Render, Frankfurt) → PostgreSQL (Neon, Frankfurt)
 
-### Переменные окружения (значения — только в панелях сервисов)
+### Переменные окружения 
 
 | Переменная | Где задана | Секрет |
 |---|---|---|
