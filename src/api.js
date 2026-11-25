@@ -1,4 +1,6 @@
-export const API_URL = 'http://localhost:3000/api';
+// Адрес API берём из переменной окружения Vite.
+// Локально из .env.development, на хостинге (ЛР9) из настроек сборки
+export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
 // Обёртка над fetch: добавляет токен, разбирает JSON, превращает ошибки API в исключения
 export async function apiFetch(path, options = {}) {
